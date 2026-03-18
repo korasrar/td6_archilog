@@ -1,5 +1,12 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import { ref, provide } from "vue";
+
+import { QuizProvider } from "./services/QuizProvider";
+import { API_ENDPOINT } from "./config.js";
+const provider = new QuizProvider(API_ENDPOINT);
+provide("quizProvider", provider);
+
+import HelloWorld from "./components/HelloWorld.vue";
 </script>
 
 <template>
