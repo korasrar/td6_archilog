@@ -23,4 +23,3 @@ const questions = ref([]);
       <!-- rien d'autre pour le moment (questions item dans un second temps) -->
     </div>
   </div>
-</template>
