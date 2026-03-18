@@ -5,14 +5,18 @@ export class QuizProvider {
 
   async getQuestionnaires() {
     const response = await fetch(this.apiEndpoint + "questionnaires");
-    return await response.json();
+    const json = await response.json();
+    console.log("getQuestionnaires response:", json.questionnaires);
+    return json.questionnaires;
   }
 
   async getQuestionnaire(idQuestionnaire) {
     const response = await fetch(
       this.apiEndpoint + "questionnaires/" + idQuestionnaire,
     );
-    return await response.json();
+    const json = await response.json();
+    console.log("getQuestionnaire response:", json);
+    return json;
   }
 
   async addQuestionnaire(questionnaire) {
@@ -23,7 +27,9 @@ export class QuizProvider {
       },
       body: JSON.stringify(questionnaire),
     });
-    return await response.json();
+    const json = await response.json();
+    console.log("addQuestionnaire response:", json);
+    return json;
   }
 
   async deleteQuestionnaire(idQuestionnaire) {

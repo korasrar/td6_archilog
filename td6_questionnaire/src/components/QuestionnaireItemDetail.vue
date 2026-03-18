@@ -3,21 +3,9 @@ const props = defineProps({
   questionnaire: Object,
 });
 
-const emit = defineEmits(["delete", "update"]);
+// récuperer les questions du questionnaire
+const questions = ref([]);
 
-function deleteQuestionnaire() {
-  emit("delete", props.questionnaire.id);
-}
-
-function updateQuestionnaire() {
-  const newNom = prompt("Modifier le questionnaire", props.questionnaire.titre_questionnaire);
-  if (newNom) {
-    emit("update", {
-      questionnaire: props.questionnaire,
-      newNomquestionnaire: newNom,
-    });
-  }
-}
 </script>
 
 <template>
