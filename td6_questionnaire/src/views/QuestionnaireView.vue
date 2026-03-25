@@ -24,15 +24,6 @@ async function deleteQuestionnaire(id) {
   await loadQuestionnaires();
 }
 
-async function updateQuestionnaire({ questionnaire, newNomquestionnaire }) {
-  if (newNomquestionnaire && newNomquestionnaire.trim() !== "") {
-    await provider.updateQuestionnaire(questionnaire.id, {
-      title: newNomquestionnaire,
-    });
-    await loadQuestionnaires();
-  }
-}
-
 onMounted(() => {
   loadQuestionnaires();
 });
@@ -62,7 +53,6 @@ onMounted(() => {
         <QuestionnaireItem
           :questionnaire="q"
           @delete="deleteQuestionnaire"
-          @update="updateQuestionnaire"
         />
       </div>
     </div>
