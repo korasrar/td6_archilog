@@ -13,6 +13,8 @@ const questionnaireId = route.params.id;
 
 const questionnaire = ref({ title: '' });
 const questions = ref([]);
+const answers = ref({});
+const showResults = ref(false);
 
 // Index de la question courante basé sur l'URL
 const currentQuestionIndex = computed(() => {
@@ -34,6 +36,9 @@ const loadData = async () => {
     
     const qsData = await quizProvider.getQuestions(questionnaireId);
     questions.value = qsData.questions || qsData;
+    
+    // reset du state et résultats si on recharge (pas strictement necessaire mais c'est propre)
+    showResults.value = false;
     
     // Si l'id dans l'URL est manquant ou invalide (et qu'il y a des questions)
     if (questions.value.length > 0 && currentQuestionIndex.value === -1) {
@@ -58,6 +63,22 @@ const goToPreviousQuestion = () => {
   }
 };
 
+const handleAnswer = (answerData) => {
+  answers.value[answerData.questionId] = {
+    answer: answerData.answer,
+    isCorrect: answerData.isCorrect,
+    answered: answerData.answered
+  };
+};
+
+const finishQuiz = () => {
+  showResults.value = true;
+};
+
+const score = computed(() => {
+  return Object.values(answers.value).filter(val => val.isCorrect).length;
+});
+
 onMounted(() => {
   loadData();
 });
@@ -70,7 +91,7 @@ onMounted(() => {
       <h1 class="mb-0">Jouer : {{ questionnaire.titre_questionnaire || questionnaire.title }}</h1>
     </div>
 
-    <div class="mb-4">
+    <div class="mb-4" v-if="!showResults">
       <h2 class="mb-3">Question {{ currentQuestionIndex + 1 }} / {{ questions.length }}</h2>
       <div v-if="questions.length === 0" class="alert alert-info">Aucune question dans ce questionnaire.</div>
       
@@ -79,6 +100,8 @@ onMounted(() => {
         :key="currentQuestion.id" 
         :question="currentQuestion" 
         :index="currentQuestionIndex + 1"
+        :savedState="answers[currentQuestion.id]"
+        @answer="handleAnswer"
       />
       
       <div class="d-flex justify-content-between mt-4" v-if="questions.length > 0">
@@ -91,9 +114,27 @@ onMounted(() => {
         <button 
           class="btn btn-primary" 
           @click="goToNextQuestion" 
-          :disabled="currentQuestionIndex === questions.length - 1">
+          v-if="currentQuestionIndex < questions.length - 1">
           Question suivante
         </button>
+        <button 
+          class="btn btn-success" 
+          @click="finishQuiz" 
+          v-if="currentQuestionIndex === questions.length - 1">
+          Terminer le questionnaire
+        </button>
+      </div>
+    </div>
+
+    <!-- Écran de score final -->
+    <div class="card mb-4 shadow-sm text-center" v-else>
+      <div class="card-body py-5">
+        <h2 class="card-title text-success mb-4">Quiz terminé !</h2>
+        <h4 class="display-4 font-weight-bold">
+          Score : {{ score }} / {{ questions.length }}
+        </h4>
+        <p class="text-muted mt-3">Merci d'avoir participé.</p>
+        <router-link to="/questionnaires" class="btn btn-primary mt-4">Retourner à l'accueil</router-link>
       </div>
     </div>
   </div>
