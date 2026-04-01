@@ -17,7 +17,6 @@ const questions = ref([]);
 const answers = ref({});
 const showResults = ref(false);
 
-// Index de la question courante basé sur l'URL
 const currentQuestionIndex = computed(() => {
   if (!route.params.questionId) return -1;
   const qId = route.params.questionId;
@@ -38,10 +37,7 @@ const loadData = async () => {
     const qsData = await quizProvider.getQuestions(questionnaireId);
     questions.value = qsData.questions || qsData;
     
-    // reset du state et résultats si on recharge (pas strictement necessaire mais c'est propre)
     showResults.value = false;
-    
-    // Si l'id dans l'URL est manquant ou invalide (et qu'il y a des questions)
     if (questions.value.length > 0 && currentQuestionIndex.value === -1) {
       router.replace(`/questionnaires/${questionnaireId}/play/questions/${questions.value[0].id}`);
     }
@@ -127,7 +123,6 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Écran de score final -->
     <QuestionnaireScore 
       v-else 
       :score="score" 

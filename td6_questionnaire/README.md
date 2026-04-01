@@ -1,5 +1,32 @@
-# Vue 3 + Vite
+# sae_devmobile
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Installation
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+```bash
+cd td6_questionnaire/
+npm install
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements
+```
+
+### Lancement de l'api
+```bash
+flask run
+```
+
+### Lancement du client
+
+```bash
+npm run dev
+```
+
+
+# Rapport
+
+## Les différents composants et leurs rôle
+
+### QuestionnairePlay.vue
+Ce composant est la vue qui permet de jouer à un questionnaire, il contient les fonctions qui permettent de naviguer dans le questionnaire. Ces fonctions sont appelées quand 
+
+
