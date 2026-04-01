@@ -72,10 +72,6 @@ const finishQuiz = () => {
   showResults.value = true;
 };
 
-const score = computed(() => {
-  return Object.values(answers.value).filter(val => val.isCorrect).length;
-});
-
 onMounted(() => {
   loadData();
 });
@@ -125,8 +121,8 @@ onMounted(() => {
 
     <QuestionnaireScore 
       v-else 
-      :score="score" 
-      :total="questions.length" 
+      :questions="questions"
+      :answers="answers"
     />
   </div>
 </template>
