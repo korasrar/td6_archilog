@@ -15,6 +15,8 @@ cd td2_bd
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+flask cleardb
+flask syncdb
 flask run
 ```
 
