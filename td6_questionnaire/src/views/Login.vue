@@ -7,7 +7,7 @@ const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 
-const password = ref("");
+const password = ref("admin123");
 const errorMessage = ref("");
 
 const handleLogin = () => {
