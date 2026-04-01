@@ -29,6 +29,7 @@ function deleteQuestionnaire() {
           <button class="btn btn-danger btn-sm" @click="deleteQuestionnaire">
             Supprimer
           </button>
+          <router-link :to="`/questionnaires/${questionnaire.id}/play/questions/play`" class="btn btn-success btn-sm">Jouer</router-link>
         </div>
       </div>
     </div>

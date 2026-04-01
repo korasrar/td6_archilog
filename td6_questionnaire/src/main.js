@@ -7,6 +7,7 @@ import QuestionnaireView from "./views/QuestionnaireView.vue";
 import QuestionnaireDetail from "./views/QuestionnaireDetail.vue";
 import QuestionnaireEdit from "./views/QuestionnaireEdit.vue";
 import LoginView from "./views/Login.vue";
+import QuestionnairePlay from "./views/QuestionnairePlay.vue";
 
 const routes = [
   { path: "/questionnaires", component: QuestionnaireView },
@@ -17,6 +18,7 @@ const routes = [
     meta: { requiresAuth: true }
   }, 
   { path: "/login", component: LoginView },
+  { path: "/questionnaires/:id/play/questions/:questionId", component: QuestionnairePlay },
   { path: "/", redirect: "/questionnaires" }
 ];
 
