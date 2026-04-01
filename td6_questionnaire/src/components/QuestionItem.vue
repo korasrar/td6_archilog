@@ -35,9 +35,24 @@ const cancelEdit = () => {
 };
 
 const saveEdit = () => {
+  if (editData.value.type === "question_fermee" && !checkReponseExistante()) {
+    alert("La bonne réponse doit correspondre à l'une des propositions.");
+    return;
+  }
   emit("update", editData.value);
   isEditing.value = false;
 };
+
+function checkReponseExistante() {
+  if (editData.value.type === "question_fermee") {
+    const reponse = editData.value.bonne_reponse;
+    return (
+      reponse === editData.value.proposition1 ||
+      reponse === editData.value.proposition2
+    );
+  }
+  return true;
+}
 </script>
 
 <template>

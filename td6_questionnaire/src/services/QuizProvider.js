@@ -103,4 +103,10 @@ export class QuizProvider {
     );
     return await response.json();
   }
+
+  async checkDoublonNomQuestionnaire(title) {
+    const result = await this.getQuestionnaires();
+    const existing = result.find((q) => q.title.toLowerCase() === title.toLowerCase());
+    return !!existing;
+  }
 }

@@ -12,10 +12,15 @@ async function loadQuestionnaires() {
 }
 
 async function addQuestionnaire() {
-  if (newQuestionnaireTitle.value.trim() !== "") {
+  if (
+    newQuestionnaireTitle.value.trim() !== "" &&
+    !(await provider.checkDoublonNomQuestionnaire(newQuestionnaireTitle.value))
+  ) {
     await provider.addQuestionnaire({ title: newQuestionnaireTitle.value });
     newQuestionnaireTitle.value = "";
     await loadQuestionnaires();
+  } else {
+    alert("Le titre du questionnaire ne peut pas être vide ou déjà existant.");
   }
 }
 
@@ -45,15 +50,8 @@ onMounted(() => {
     </div>
 
     <div class="row">
-      <div
-        class="col-12 mb-3"
-        v-for="q in questionnaires"
-        :key="q.id"
-      >
-        <QuestionnaireItem
-          :questionnaire="q"
-          @delete="deleteQuestionnaire"
-        />
+      <div class="col-12 mb-3" v-for="q in questionnaires" :key="q.id">
+        <QuestionnaireItem :questionnaire="q" @delete="deleteQuestionnaire" />
       </div>
     </div>
   </div>
