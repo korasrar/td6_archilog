@@ -38,9 +38,8 @@ const loadData = async () => {
     const qsData = await quizProvider.getQuestions(questionnaireId);
     questions.value = qsData.questions || qsData;
     
-    // reset du state et résultats si on recharge (pas strictement necessaire mais c'est propre)
     showResults.value = false;
-    
+
     // Si l'id dans l'URL est manquant ou invalide (et qu'il y a des questions)
     if (questions.value.length > 0 && currentQuestionIndex.value === -1) {
       router.replace(`/questionnaires/${questionnaireId}/play/questions/${questions.value[0].id}`);
@@ -75,10 +74,6 @@ const handleAnswer = (answerData) => {
 const finishQuiz = () => {
   showResults.value = true;
 };
-
-const score = computed(() => {
-  return Object.values(answers.value).filter(val => val.isCorrect).length;
-});
 
 onMounted(() => {
   loadData();
@@ -127,11 +122,10 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Écran de score final -->
     <QuestionnaireScore 
       v-else 
-      :score="score" 
-      :total="questions.length" 
+      :questions="questions"
+      :answers="answers"
     />
   </div>
 </template>
