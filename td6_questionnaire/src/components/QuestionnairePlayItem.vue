@@ -1,14 +1,28 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 const props = defineProps({
   question: Object,
-  index: Number
+  index: Number,
+  savedState: {
+    type: Object,
+    default: null
+  }
 });
+
+const emit = defineEmits(['answer']);
 
 const userAnswer = ref('');
 const answered = ref(false);
 const isCorrect = ref(false);
+
+onMounted(() => {
+  if (props.savedState) {
+    userAnswer.value = props.savedState.answer;
+    answered.value = props.savedState.answered;
+    isCorrect.value = props.savedState.isCorrect;
+  }
+});
 
 const bonneReponse = computed(() => {
   return props.question.Reponse || props.question.BonneReponse || props.question.bonne_reponse || '';
@@ -23,9 +37,16 @@ const proposition2 = computed(() => {
 });
 
 const checkAnswer = () => {
-  if (!userAnswer.value) return;
+  if (!userAnswer.value || answered.value) return;
   answered.value = true;
   isCorrect.value = userAnswer.value.toLowerCase().trim() === bonneReponse.value.toLowerCase().trim();
+  
+  emit('answer', {
+    questionId: props.question.id,
+    answer: userAnswer.value,
+    isCorrect: isCorrect.value,
+    answered: true
+  });
 };
 </script>
 
