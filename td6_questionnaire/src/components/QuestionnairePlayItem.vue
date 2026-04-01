@@ -16,14 +16,6 @@ const userAnswer = ref('');
 const answered = ref(false);
 const isCorrect = ref(false);
 
-onMounted(() => {
-  if (props.savedState) {
-    userAnswer.value = props.savedState.answer;
-    answered.value = props.savedState.answered;
-    isCorrect.value = props.savedState.isCorrect;
-  }
-});
-
 const bonneReponse = computed(() => {
   return props.question.Reponse || props.question.BonneReponse || props.question.bonne_reponse || '';
 });
@@ -34,6 +26,14 @@ const proposition1 = computed(() => {
 
 const proposition2 = computed(() => {
   return props.question.Proposition2 || props.question.proposition2 || '';
+});
+
+onMounted(() => {
+  if (props.savedState) {
+    userAnswer.value = props.savedState.answer;
+    answered.value = props.savedState.answered;
+    isCorrect.value = props.savedState.isCorrect;
+  }
 });
 
 const checkAnswer = () => {
