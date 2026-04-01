@@ -1,0 +1,424 @@
+openapi: '3.0.3'
+info:
+  title: Quiz API
+  description: API REST pour la gestion de questionnaires et de questions
+  version: '1.0'
+servers:
+  - url: http://127.0.0.1:5000/quiz/api/v1.0/
+    description: Serveur de développement local
+
+paths:
+  /questionnaires:
+    get:
+      summary: Liste tous les questionnaires
+      description: Retourne la liste complète des questionnaires disponibles
+      operationId: getQuestionnaires
+      responses:
+        '200':
+          description: Liste des questionnaires récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  questionnaires:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/QuestionnaireSimple'
+    
+    post:
+      summary: Créer un nouveau questionnaire
+      description: Crée un nouveau questionnaire avec un titre
+      operationId: createQuestionnaire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                  description: Titre du questionnaire
+                  example: "Questionnaire de mathématiques"
+      responses:
+        '201':
+          description: Questionnaire créé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  questionnaire:
+                    $ref: '#/components/schemas/QuestionnaireSimple'
+        '400':
+          description: Requête invalide (titre manquant ou invalide)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /questionnaires/{questionnaire_id}:
+    get:
+      summary: Récupérer un questionnaire spécifique
+      description: Retourne les détails d'un questionnaire incluant toutes ses questions
+      operationId: getQuestionnaire
+      parameters:
+        - name: questionnaire_id
+          in: path
+          required: true
+          description: Identifiant du questionnaire
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Questionnaire récupéré avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  titre_questionnaire:
+                    type: string
+                    example: "Questionnaire de mathématiques"
+                  questions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Question'
+        '404':
+          description: Questionnaire non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    put:
+      summary: Mettre à jour un questionnaire
+      description: Modifie le titre d'un questionnaire existant
+      operationId: updateQuestionnaire
+      parameters:
+        - name: questionnaire_id
+          in: path
+          required: true
+          description: Identifiant du questionnaire
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Nouveau titre du questionnaire
+                  example: "Questionnaire de mathématiques - Niveau 2"
+      responses:
+        '200':
+          description: Questionnaire mis à jour avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  questionnaire:
+                    $ref: '#/components/schemas/QuestionnaireSimple'
+        '400':
+          description: Requête invalide
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Questionnaire non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    delete:
+      summary: Supprimer un questionnaire
+      description: Supprime un questionnaire et toutes ses questions associées
+      operationId: deleteQuestionnaire
+      parameters:
+        - name: questionnaire_id
+          in: path
+          required: true
+          description: Identifiant du questionnaire
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Questionnaire supprimé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+        '404':
+          description: Questionnaire non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /questionnaires/{questionnaire_id}/questions:
+    get:
+      summary: Récupérer les questions d'un questionnaire
+      description: Retourne toutes les questions d'un questionnaire spécifique
+      operationId: getQuestions
+      parameters:
+        - name: questionnaire_id
+          in: path
+          required: true
+          description: Identifiant du questionnaire
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Questions récupérées avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  questions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Question'
+        '404':
+          description: Questionnaire non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      summary: Ajouter une question à un questionnaire
+      description: Crée une nouvelle question (ouverte ou fermée) dans un questionnaire
+      operationId: addQuestion
+      parameters:
+        - name: questionnaire_id
+          in: path
+          required: true
+          description: Identifiant du questionnaire
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/QuestionOuverteInput'
+                - $ref: '#/components/schemas/QuestionFermeeInput'
+            examples:
+              question_ouverte:
+                summary: Exemple de question ouverte
+                value:
+                  enonce: "Quelle est la capitale de la France ?"
+                  type: "question_ouverte"
+                  bonne_reponse: "Paris"
+              question_fermee:
+                summary: Exemple de question fermée
+                value:
+                  enonce: "Quelle est la capitale de la France ?"
+                  type: "question_fermee"
+                  bonne_reponse: "Paris"
+                  proposition1: "Paris"
+                  proposition2: "Lyon"
+      responses:
+        '201':
+          description: Question ajoutée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  questions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Question'
+        '400':
+          description: Requête invalide (champs manquants)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Questionnaire non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /questionnaires/{questionnaire_id}/questions/{question_id}:
+    delete:
+      summary: Supprimer une question
+      description: Supprime une question spécifique d'un questionnaire
+      operationId: deleteQuestion
+      parameters:
+        - name: questionnaire_id
+          in: path
+          required: true
+          description: Identifiant du questionnaire
+          schema:
+            type: integer
+            example: 1
+        - name: question_id
+          in: path
+          required: true
+          description: Identifiant de la question
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Question supprimée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+        '404':
+          description: Questionnaire non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    QuestionnaireSimple:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identifiant unique du questionnaire
+          example: 1
+        title:
+          type: string
+          description: Titre du questionnaire
+          example: "Questionnaire de mathématiques"
+        uri:
+          type: string
+          format: uri
+          description: URL pour accéder au questionnaire
+          example: "http://127.0.0.1:5000/quiz/api/v1.0/questionnaires/1"
+    
+    Question:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identifiant unique de la question
+          example: 1
+        numero:
+          type: integer
+          description: Numéro d'ordre de la question dans le questionnaire
+          example: 1
+        enonce:
+          type: string
+          description: Énoncé de la question
+          example: "Quelle est la capitale de la France ?"
+        type:
+          type: string
+          description: Type de question (question_ouverte ou question_fermee)
+          enum:
+            - question_ouverte
+            - question_fermee
+          example: "question_fermee"
+        Reponse:
+          type: string
+          nullable: true
+          description: Réponse (pour question ouverte uniquement)
+          example: "Paris"
+        Proposition1:
+          type: string
+          nullable: true
+          description: Première proposition (pour question fermée uniquement)
+          example: "Paris"
+        Proposition2:
+          type: string
+          nullable: true
+          description: Deuxième proposition (pour question fermée uniquement)
+          example: "Lyon"
+        BonneReponse:
+          type: string
+          nullable: true
+          description: Bonne réponse (pour question fermée uniquement)
+          example: "Paris"
+    
+    QuestionOuverteInput:
+      type: object
+      required:
+        - enonce
+        - type
+        - bonne_reponse
+      properties:
+        enonce:
+          type: string
+          description: Énoncé de la question
+          example: "Quelle est la capitale de la France ?"
+        type:
+          type: string
+          enum:
+            - question_ouverte
+          example: "question_ouverte"
+        bonne_reponse:
+          type: string
+          description: La bonne réponse attendue
+          example: "Paris"
+    
+    QuestionFermeeInput:
+      type: object
+      required:
+        - enonce
+        - type
+        - bonne_reponse
+      properties:
+        enonce:
+          type: string
+          description: Énoncé de la question
+          example: "Quelle est la capitale de la France ?"
+        type:
+          type: string
+          enum:
+            - question_fermee
+          example: "question_fermee"
+        bonne_reponse:
+          type: string
+          description: La bonne réponse (doit correspondre à une des propositions)
+          example: "Paris"
+        proposition1:
+          type: string
+          nullable: true
+          description: Première proposition de réponse
+          example: "Paris"
+        proposition2:
+          type: string
+          nullable: true
+          description: Deuxième proposition de réponse
+          example: "Lyon"
+    
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Message d'erreur
+          example: "Not found"
