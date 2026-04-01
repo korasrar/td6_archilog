@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { QuizProvider } from '../services/QuizProvider';
 import { API_ENDPOINT } from '../config';
 import QuestionnairePlayItem from '../components/QuestionnairePlayItem.vue';
+import QuestionnaireScore from '../components/QuestionnaireScore.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -127,15 +128,10 @@ onMounted(() => {
     </div>
 
     <!-- Écran de score final -->
-    <div class="card mb-4 shadow-sm text-center" v-else>
-      <div class="card-body py-5">
-        <h2 class="card-title text-success mb-4">Quiz terminé !</h2>
-        <h4 class="display-4 font-weight-bold">
-          Score : {{ score }} / {{ questions.length }}
-        </h4>
-        <p class="text-muted mt-3">Merci d'avoir participé.</p>
-        <router-link to="/questionnaires" class="btn btn-primary mt-4">Retourner à l'accueil</router-link>
-      </div>
-    </div>
+    <QuestionnaireScore 
+      v-else 
+      :score="score" 
+      :total="questions.length" 
+    />
   </div>
 </template>
