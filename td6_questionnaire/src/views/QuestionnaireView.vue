@@ -16,6 +16,8 @@ async function addQuestionnaire() {
     await provider.addQuestionnaire({ title: newQuestionnaireTitle.value });
     newQuestionnaireTitle.value = "";
     await loadQuestionnaires();
+  } else {
+    alert("Le titre du questionnaire ne peut pas être vide.");
   }
 }
 
